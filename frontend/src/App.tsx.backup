@@ -1,0 +1,512 @@
+import { Routes, Route, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Dashboard from "./pages/Dashboard";
+import Benchmark from "./pages/Benchmark";
+import {
+  optimizePrompt,
+  getHistory,
+  getStats,
+  getCategories,
+  comparePrompts,
+  getTemplates,
+  getFeedback
+} from "./services/api";
+
+function OptimizePage() {
+const [prompt, setPrompt] = useState("");
+const [result, setResult] = useState<any>(null);
+const [loading, setLoading] = useState(false);
+
+const handleOptimize = async () => {
+if (!prompt.trim()) {
+alert("Please enter a prompt");
+return;
+}
+
+try {
+  setLoading(true);
+
+  const data = await optimizePrompt(prompt);
+
+  console.log("API Response:", data);
+
+  setResult(data);
+} catch (error) {
+  console.error(error);
+  alert("Backend connection failed");
+} finally {
+  setLoading(false);
+}
+
+};
+
+return ( <div> <h1>🚀 Mantra AI</h1>
+  <h3>Prompt Optimizer</h3>
+
+  <textarea
+    rows={8}
+    value={prompt}
+    onChange={(e) => setPrompt(e.target.value)}
+    placeholder="Enter your prompt here..."
+    style={{
+      width: "100%",
+      maxWidth: "900px",
+      padding: "12px",
+      fontSize: "16px",
+      borderRadius: "8px",
+      border: "1px solid #444",
+      backgroundColor: "#1f2937",
+      color: "white",
+    }}
+  />
+
+  <br />
+  <br />
+
+  <button
+    onClick={handleOptimize}
+    disabled={loading}
+    style={{
+      padding: "12px 24px",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontSize: "16px",
+    }}
+  >
+    {loading ? "Optimizing..." : "Optimize Prompt"}
+  </button>
+
+  {result && (
+    <div
+      style={{
+        marginTop: "30px",
+        padding: "20px",
+        backgroundColor: "#1f2937",
+        borderRadius: "10px",
+        maxWidth: "1000px",
+      }}
+    >
+      <h2>Optimized Prompt</h2>
+
+      <pre
+        style={{
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
+        }}
+      >
+        {result.optimizedPrompt}
+      </pre>
+
+      <hr />
+
+      <h3>Score</h3>
+      <p>{result.score}</p>
+
+      <h3>Category</h3>
+      <p>{result.category}</p>
+
+      {result.strengths && (
+        <>
+          <h3>Strengths</h3>
+          <ul>
+            {result.strengths.map((item: string, index: number) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {result.missingElements && (
+        <>
+          <h3>Missing Elements</h3>
+          <ul>
+            {result.missingElements.map((item: string, index: number) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  )}
+</div>
+
+);
+}
+
+
+function TemplatesPage() {
+const [templates, setTemplates] = useState<any[]>([]);
+
+useEffect(() => {
+loadTemplates();
+}, []);
+
+const loadTemplates = async () => {
+try {
+const data = await getTemplates();
+setTemplates(data);
+} catch (error) {
+console.error(error);
+}
+};
+
+return ( <div> <h2>Prompt Templates</h2>
+
+  {templates.map((template, index) => (
+    <div
+      key={index}
+      style={{
+        background: "#1f2937",
+        padding: "20px",
+        marginBottom: "15px",
+        borderRadius: "10px",
+      }}
+    >
+      <h3>{template.category}</h3>
+
+      <pre
+        style={{
+          whiteSpace: "pre-wrap",
+        }}
+      >
+        {template.template}
+      </pre>
+    </div>
+  ))}
+</div>
+
+
+);
+}
+
+
+
+function HistoryPage() {
+
+  const [history, setHistory] = useState<any[]>([]);
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const loadHistory = async () => {
+    try {
+      const data = await getHistory();
+      setHistory(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Prompt History</h2>
+
+      {history.map((item) => (
+        <div
+          key={item.id}
+          style={{
+            background: "#1f2937",
+            padding: "15px",
+            marginBottom: "10px",
+            borderRadius: "8px",
+          }}
+        >
+          <h4>{item.originalPrompt}</h4>
+
+          <p>
+            <b>Score:</b> {item.score}
+          </p>
+
+          <p>
+            <b>Category:</b> {item.category}
+          </p>
+
+          <small>{item.createdAt}</small>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FeedbackPage() {
+  const [prompt, setPrompt] = useState("");
+  const [feedback, setFeedback] = useState("");
+
+  const handleFeedback = async () => {
+    try {
+      const data = await getFeedback(prompt);
+      setFeedback(data.feedback);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>AI Prompt Critic</h2>
+
+      <textarea
+        rows={6}
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Enter prompt..."
+        style={{
+          width: "100%",
+          marginBottom: "10px",
+        }}
+      />
+
+      <button onClick={handleFeedback}>
+        Analyze Prompt
+      </button>
+
+      {feedback && (
+        <div
+          style={{
+            marginTop: "20px",
+            background: "#1f2937",
+            padding: "20px",
+            borderRadius: "10px",
+          }}
+        >
+          <pre
+            style={{
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {feedback}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
+function AnalyticsPage() {
+  const [stats, setStats] = useState<any>(null);
+  const [categories, setCategories] = useState<any>({});
+
+  useEffect(() => {
+    loadAnalytics();
+  }, []);
+
+  const loadAnalytics = async () => {
+    try {
+      const statsData = await getStats();
+      const categoryData = await getCategories();
+
+      setStats(statsData);
+      setCategories(categoryData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Analytics</h2>
+
+      {stats && (
+        <div
+          style={{
+            background: "#1f2937",
+            padding: "20px",
+            borderRadius: "10px",
+            marginBottom: "20px",
+          }}
+        >
+          <h3>Total Prompts</h3>
+          <p>{stats.totalPrompts}</p>
+
+          <h3>Average Score</h3>
+          <p>{stats.averageScore}</p>
+        </div>
+      )}
+
+      <div
+        style={{
+          background: "#1f2937",
+          padding: "20px",
+          borderRadius: "10px",
+        }}
+      >
+        <h3>Categories</h3>
+
+        {Object.entries(categories).map(([key, value]) => (
+          <p key={key}>
+            {key}: {String(value)}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ComparePage() {
+const [prompt1, setPrompt1] = useState("");
+const [prompt2, setPrompt2] = useState("");
+const [result, setResult] = useState<any>(null);
+
+const handleCompare = async () => {
+try {
+const data = await comparePrompts(
+prompt1,
+prompt2
+);
+
+  setResult(data);
+} catch (error) {
+  console.error(error);
+}
+
+};
+
+return ( <div> <h2>Compare Prompts</h2>
+
+  <textarea
+    rows={5}
+    value={prompt1}
+    onChange={(e) =>
+      setPrompt1(e.target.value)
+    }
+    placeholder="Prompt 1"
+    style={{
+      width: "100%",
+      marginBottom: "10px",
+    }}
+  />
+
+  <textarea
+    rows={5}
+    value={prompt2}
+    onChange={(e) =>
+      setPrompt2(e.target.value)
+    }
+    placeholder="Prompt 2"
+    style={{
+      width: "100%",
+      marginBottom: "10px",
+    }}
+  />
+
+  <button onClick={handleCompare}>
+    Compare
+  </button>
+
+  {result && (
+    <div
+      style={{
+        marginTop: "20px",
+        background: "#1f2937",
+        padding: "20px",
+        borderRadius: "10px",
+      }}
+    >
+      <h3>Results</h3>
+
+      <p>
+        Score 1: {result.score1}
+      </p>
+
+      <p>
+        Score 2: {result.score2}
+      </p>
+
+      <h2>
+        Winner: {result.winner}
+      </h2>
+    </div>
+  )}
+</div>
+
+);
+}
+
+
+
+export default function App() {
+return (
+<div
+style={{
+display: "flex",
+minHeight: "100vh",
+backgroundColor: "#111827",
+color: "white",
+fontFamily: "Arial, sans-serif",
+}}
+>
+<div
+style={{
+width: "240px",
+backgroundColor: "#1f2937",
+padding: "20px",
+}}
+> <h2>🚀 Mantra AI</h2>
+
+    <p>
+      <Link to="/" style={{ color: "white" }}>
+        Dashboard
+      </Link>
+    </p>
+  <p>
+  <Link to="/optimize" style={{ color: "white" }}>
+    Optimize
+  </Link>
+</p>
+    <p>
+      <Link to="/history" style={{ color: "white" }}>
+        History
+      </Link>
+    </p>
+
+    <p>
+      <Link to="/analytics" style={{ color: "white" }}>
+        Analytics
+      </Link>
+    </p>
+
+    <p>
+      <Link to="/compare" style={{ color: "white" }}>
+        Compare
+      </Link>
+    </p>
+  <p>
+  <Link to="/benchmark" style={{ color: "white" }}>
+    Benchmark
+  </Link>
+</p>
+    <p>
+      <Link to="/templates" style={{ color: "white" }}>
+        Templates
+      </Link>
+    </p>
+
+<p>
+  <Link to="/feedback" style={{ color: "white" }}>
+    Feedback
+  </Link>
+</p>
+  </div>
+
+  <div
+  style={{
+    flex: 1,
+    padding: "30px",
+  }}
+>
+  <Routes>
+    <Route path="/" element={<Dashboard />} />
+    <Route path="/optimize" element={<OptimizePage />} />
+    <Route path="/history" element={<HistoryPage />} />
+    <Route path="/analytics" element={<AnalyticsPage />} />
+    <Route path="/compare" element={<ComparePage />} />
+    <Route path="/benchmark" element={<Benchmark />} />
+    <Route path="/templates" element={<TemplatesPage />} />
+    <Route path="/feedback" element={<FeedbackPage />} />
+  </Routes>
+</div>
+</div>
+
+);
+}

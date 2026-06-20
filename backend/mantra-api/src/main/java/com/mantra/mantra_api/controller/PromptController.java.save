@@ -1,0 +1,96 @@
+package com.mantra.mantra_api.controller;
+
+import com.mantra.mantra_api.dto.PromptAnalysis;
+import com.mantra.mantra_api.dto.PromptRequest;
+import com.mantra.mantra_api.dto.PromptResponse;
+import com.mantra.mantra_api.dto.StatsResponse;
+import com.mantra.mantra_api.entity.PromptHistory;
+import com.mantra.mantra_api.repository.PromptHistoryRepository;
+import com.mantra.mantra_api.service.AnalysisService;
+import com.mantra.mantra_api.service.CategoryService;
+import com.mantra.mantra_api.service.OptimizerService;
+import com.mantra.mantra_api.service.ScoreService;
+
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/prompts")
+public class PromptController {
+
+    private final OptimizerService optimizerService;
+    private final ScoreService scoreService;
+    private final CategoryService categoryService;
+    private final AnalysisService analysisService;
+    private final PromptHistoryRepository historyRepository;
+
+    public PromptController(
+            OptimizerService optimizerService,
+            ScoreService scoreService,
+            CategoryService categoryService,
+            AnalysisService analysisService,
+            PromptHistoryRepository historyRepository) {
+
+        this.optimizerService = optimizerService;
+        this.scoreService = scoreService;
+        this.categoryService = categoryService;
+        this.analysisService = analysisService;
+        this.historyRepository = historyRepository;
+    }
+
+    @PostMapping("/optimize")
+    public PromptResponse optimizePrompt(
+            @RequestBody PromptRequest request) {
+
+        String prompt = request.getPrompt();
+
+        String optimized =
+                optimizerService.optimize(prompt);
+
+        PromptAnalysis analysis =
+                analysisService.analyze(prompt);
+
+        String category =
+                categoryService.detectCategory(prompt);
+
+        PromptHistory history = new PromptHistory();
+
+        history.setOriginalPrompt(prompt);
+        history.setOptimizedPrompt(optimized);
+        history.setScore(analysis.getScore());
+        history.setCategory(category);
+        history.setCreatedAt(LocalDateTime.now());
+
+        historyRepository.save(history);
+
+        return new PromptResponse(
+                prompt,
+                optimized,
+                analysis.getScore(),
+                category,
+                analysis.getStrengths(),
+                analysis.getMissingElements()
+        );
+    }
+
+    @GetMapping("/history")
+    public List<PromptHistory> getHistory() {
+        return historyRepository.findAll();
+    }
+@GetMapping("/stats")
+public StatsResponse getStats() {
+
+    long totalPrompts =
+            historyRepository.count();
+
+    Double avg =
+            historyRepository.getAverageScore();
+
+    return new StatsResponse(
+            totalPrompts,
+            avg == null ? 0 : avg
+    );
+}
+}

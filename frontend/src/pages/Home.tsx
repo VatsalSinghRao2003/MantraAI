@@ -1,54 +1,60 @@
 import { useState } from "react";
-import PromptInput from "../components/PromptInput";
-import PromptOutput from "../components/PromptOutput";
-import { optimizePrompt, type PromptResult } from "../services/api";
+
+import Hero from "../components/Hero";
+import PromptCard from "../components/PromptCard";
+import HistorySidebar from "../components/HistorySidebar";
+import OutputCard from "../components/OutputCard";
+
+import { optimizePrompt } from "../services/api";
+import { usePromptHistory } from "../hooks/usePromptHistory";
 
 function Home() {
   const [prompt, setPrompt] = useState("");
-  const [result, setResult] = useState<PromptResult | null>(null);
-  const [error, setError] = useState("");
+  const [result, setResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleOptimize = async () => {
-    if (!prompt.trim() || isLoading) return;
+  const { history, addPrompt } =
+    usePromptHistory();
 
-    setError("");
+  const handleOptimize = async () => {
+    if (!prompt.trim()) return;
+
     setIsLoading(true);
 
     try {
-      const data = await optimizePrompt(prompt);
+      const data =
+        await optimizePrompt(prompt);
+
       setResult(data);
-    } catch {
-      setError("Unable to optimize the prompt. Make sure the API is running.");
+
+      addPrompt(prompt);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "900px",
-        margin: "0 auto",
-        padding: "20px",
-      }}
-    >
-      <h1>Mantra</h1>
+    <div className="max-w-7xl mx-auto p-8">
+      <Hero />
 
-      <PromptInput
-        prompt={prompt}
-        setPrompt={setPrompt}
-        onOptimize={handleOptimize}
-        isLoading={isLoading}
-      />
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <PromptCard
+            prompt={prompt}
+            setPrompt={setPrompt}
+            onOptimize={handleOptimize}
+            isLoading={isLoading}
+          />
 
-      {error && (
-        <p style={{ color: "#dc2626", marginTop: "16px", textAlign: "left" }}>
-          {error}
-        </p>
-      )}
+          <OutputCard
+            result={result}
+          />
+        </div>
 
-      <PromptOutput result={result} />
+        <HistorySidebar
+          history={history}
+        />
+      </div>
     </div>
   );
 }

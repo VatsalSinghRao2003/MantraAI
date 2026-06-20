@@ -1,0 +1,4 @@
+ID,Prompt,Category,Score
+1,"Create login API using Spring Boot",Coding,80
+3,"Create JWT authentication",General,60
+4,"Create React dashboard",General,70

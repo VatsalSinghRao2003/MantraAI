@@ -1,37 +1,52 @@
-type PromptResult = {
-category: string;
-score: number;
-optimizedPrompt: string;
-};
+import CopyButton from "./CopyButton";
+import ScoreCard from "./ScoreCard";
 
 type Props = {
-result: PromptResult | null;
+  result: any;
 };
 
-function PromptOutput({ result }: Props) {
-if (!result) return null;
+function PromptOutput({
+  result,
+}: Props) {
+  if (!result) {
+    return (
+      <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 text-center text-slate-400">
+        Optimize a prompt to see results
+      </div>
+    );
+  }
 
-return (
-<div style={{ marginTop: "20px", textAlign: "left" }}> <h3>Category</h3> <p>{result.category}</p>
+  return (
+    <>
+      <ScoreCard
+        score={result.score}
+      />
 
-  <h3>Score</h3>
-  <p>{result.score}/100</p>
+      <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-white text-xl font-semibold">
+            Optimized Prompt
+          </h2>
 
-  <h3>Optimized Prompt</h3>
+          <CopyButton
+            text={
+              result.optimizedPrompt
+            }
+          />
+        </div>
 
-  <pre
-    style={{
-      whiteSpace: "pre-wrap",
-      background: "#f4f4f4",
-      padding: "12px",
-    }}
-  >
-    {result.optimizedPrompt}
-  </pre>
-</div>
+        <div className="text-slate-300 mb-4">
+          Category:
+          {" "}
+          {result.category}
+        </div>
 
-
-);
+        <pre className="whitespace-pre-wrap text-slate-300">
+          {result.optimizedPrompt}
+        </pre>
+      </div>
+    </>
+  );
 }
 
 export default PromptOutput;

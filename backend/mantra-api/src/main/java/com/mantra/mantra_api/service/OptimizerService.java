@@ -4,23 +4,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OptimizerService {
-public String optimize(String prompt) {
 
-    return """
-            Act as a Senior Software Engineer.
+    private final AIProviderService aiProviderService;
 
-            Task:
-            %s
+    public OptimizerService(
+            AIProviderService aiProviderService) {
 
-            Requirements:
-            - Provide detailed explanation
-            - Include best practices
-            - Include examples
+        this.aiProviderService =
+                aiProviderService;
+    }
 
-            Output Format:
-            - Step-by-step response
-            - Final summary
-            """.formatted(prompt);
-}
+    public String optimize(String prompt) {
 
+        return aiProviderService.optimize(
+                prompt);
+    }
 }
