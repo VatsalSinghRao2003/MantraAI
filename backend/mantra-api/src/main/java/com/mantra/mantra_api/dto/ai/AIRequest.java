@@ -1,32 +1,41 @@
 package com.mantra.mantra_api.dto.ai;
 
+import java.util.List;
+
 public class AIRequest {
+    private String model = "llama-3.1-8b-instant";
+    private List<Message> messages;
+    private double temperature = 0.2;
 
-    private String model;
-    private String prompt;
-    private boolean stream;
+    public AIRequest() {}
 
-    public String getModel() {
-        return model;
+    public void setPrompt(String prompt) {
+        this.messages = List.of(new Message("user", prompt));
     }
 
     public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getPrompt() {
-        return prompt;
-    }
-
-    public void setPrompt(String prompt) {
-        this.prompt = prompt;
-    }
-
-    public boolean isStream() {
-        return stream;
+        if (model != null && !model.isEmpty()) {
+            this.model = model;
+        }
     }
 
     public void setStream(boolean stream) {
-        this.stream = stream;
+    }
+
+    public String getModel() { return model; }
+    public List<Message> getMessages() { return messages; }
+    public double getTemperature() { return temperature; }
+    public void setTemperature(double temperature) { this.temperature = temperature; }
+
+    public static class Message {
+        private String role;
+        private String content;
+
+        public Message(String role, String content) {
+            this.role = role;
+            this.content = content;
+        }
+        public String getRole() { return role; }
+        public String getContent() { return content; }
     }
 }

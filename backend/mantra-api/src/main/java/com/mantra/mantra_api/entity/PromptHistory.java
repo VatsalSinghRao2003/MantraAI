@@ -23,102 +23,72 @@ public class PromptHistory {
 
     private LocalDateTime createdAt;
 
-    // AI Metrics
-
+    // AI Metrics (V3)
     private Long totalDuration;
-
     private Long loadDuration;
-
     private Integer promptEvalCount;
-
     private Integer evalCount;
-
     private String model;
 
-    public PromptHistory() {
-    }
+    // Prompt Management (V4)
+    private Boolean favorite = false;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(length = 1000)
+    private String tags;           // comma-separated: "java,spring,rest"
 
-    public String getOriginalPrompt() {
-        return originalPrompt;
-    }
+    private Integer version = 1;   // prompt version number
+    private Long userId;
+    private Long workspaceId;
 
-    public void setOriginalPrompt(String originalPrompt) {
-        this.originalPrompt = originalPrompt;
-    }
 
-    public String getOptimizedPrompt() {
-        return optimizedPrompt;
-    }
+    public PromptHistory() {}
 
-    public void setOptimizedPrompt(String optimizedPrompt) {
-        this.optimizedPrompt = optimizedPrompt;
-    }
+    // ─── Getters / Setters ───────────────────────────────────────────────────────
 
-    public Integer getScore() {
-        return score;
-    }
+    public Long getId() { return id; }
 
-    public void setScore(Integer score) {
-        this.score = score;
-    }
+    public String getOriginalPrompt() { return originalPrompt; }
+    public void setOriginalPrompt(String v) { this.originalPrompt = v; }
 
-    public String getCategory() {
-        return category;
-    }
+    public String getOptimizedPrompt() { return optimizedPrompt; }
+    public void setOptimizedPrompt(String v) { this.optimizedPrompt = v; }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+    public Integer getScore() { return score; }
+    public void setScore(Integer v) { this.score = v; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String v) { this.category = v; }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime v) { this.createdAt = v; }
 
-    public Long getTotalDuration() {
-        return totalDuration;
-    }
+    public Long getTotalDuration() { return totalDuration; }
+    public void setTotalDuration(Long v) { this.totalDuration = v; }
 
-    public void setTotalDuration(Long totalDuration) {
-        this.totalDuration = totalDuration;
-    }
+    public Long getLoadDuration() { return loadDuration; }
+    public void setLoadDuration(Long v) { this.loadDuration = v; }
 
-    public Long getLoadDuration() {
-        return loadDuration;
-    }
+    public Integer getPromptEvalCount() { return promptEvalCount; }
+    public void setPromptEvalCount(Integer v) { this.promptEvalCount = v; }
 
-    public void setLoadDuration(Long loadDuration) {
-        this.loadDuration = loadDuration;
-    }
+    public Integer getEvalCount() { return evalCount; }
+    public void setEvalCount(Integer v) { this.evalCount = v; }
 
-    public Integer getPromptEvalCount() {
-        return promptEvalCount;
-    }
+    public String getModel() { return model; }
+    public void setModel(String v) { this.model = v; }
 
-    public void setPromptEvalCount(Integer promptEvalCount) {
-        this.promptEvalCount = promptEvalCount;
-    }
+    public Boolean getFavorite() { return favorite != null && favorite; }
+    public void setFavorite(Boolean v) { this.favorite = v; }
 
-    public Integer getEvalCount() {
-        return evalCount;
-    }
+    public String getTags() { return tags; }
+    public void setTags(String v) { this.tags = v; }
 
-    public void setEvalCount(Integer evalCount) {
-        this.evalCount = evalCount;
-    }
+    public Integer getVersion() { return version; }
+    public void setVersion(Integer v) { this.version = v; }
 
-    public String getModel() {
-        return model;
-    }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-    public void setModel(String model) {
-        this.model = model;
-    }
+    public Long getWorkspaceId() { return workspaceId; }
+    public void setWorkspaceId(Long workspaceId) { this.workspaceId = workspaceId; }
 }

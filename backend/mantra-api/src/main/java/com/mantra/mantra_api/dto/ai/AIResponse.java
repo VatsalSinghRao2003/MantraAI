@@ -1,74 +1,45 @@
 package com.mantra.mantra_api.dto.ai;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AIResponse {
+    private List<Choice> choices;
+    private String model;
 
-    private String response;
+    public static class Choice {
+        private Message message;
+        public Message getMessage() { return message; }
+        public void setMessage(Message message) { this.message = message; }
+    }
 
-    @JsonProperty("total_duration")
-    private Long totalDuration;
+    public static class Message {
+        private String content;
+        public String getContent() { return content; }
+        public void setContent(String content) { this.content = content; }
+    }
 
-    @JsonProperty("load_duration")
-    private Long loadDuration;
-
-    @JsonProperty("prompt_eval_count")
-    private Integer promptEvalCount;
-
-    @JsonProperty("eval_count")
-    private Integer evalCount;
+    private String fallbackResponse;
 
     public String getResponse() {
-        return response;
+        if (choices != null && !choices.isEmpty() && choices.get(0).getMessage() != null) {
+            return choices.get(0).getMessage().getContent();
+        }
+        return fallbackResponse != null ? fallbackResponse : "";
     }
 
-    public void setResponse(
-            String response) {
+    public Integer getEvalCount() { return 0; }
+    public Integer getPromptEvalCount() { return 0; }
+    public Long getTotalDuration() { return 0L; }
+    public Long getLoadDuration() { return 0L; }
 
-        this.response = response;
-    }
-
-    public Long getTotalDuration() {
-        return totalDuration;
-    }
-
-    public void setTotalDuration(
-            Long totalDuration) {
-
-        this.totalDuration =
-                totalDuration;
-    }
-
-    public Long getLoadDuration() {
-        return loadDuration;
-    }
-
-    public void setLoadDuration(
-            Long loadDuration) {
-
-        this.loadDuration =
-                loadDuration;
-    }
-
-    public Integer getPromptEvalCount() {
-        return promptEvalCount;
-    }
-
-    public void setPromptEvalCount(
-            Integer promptEvalCount) {
-
-        this.promptEvalCount =
-                promptEvalCount;
-    }
-
-    public Integer getEvalCount() {
-        return evalCount;
-    }
-
-    public void setEvalCount(
-            Integer evalCount) {
-
-        this.evalCount =
-                evalCount;
+    public List<Choice> getChoices() { return choices; }
+    public void setChoices(List<Choice> choices) { this.choices = choices; }
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+    
+    public void setResponse(String response) {
+        this.fallbackResponse = response;
     }
 }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { margin: 0; background: #222; color: white; font-family: sans-serif; display: flex; }
+  .container { position: relative; width: 800px; height: 800px; background-image: url('src/assets/register_illustration.png'); background-size: contain; border: 1px solid red; margin: 20px; }
+  .box { position: absolute; background: rgba(255, 0, 0, 0.4); border: 1px solid #ff0000; box-sizing: border-box; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+  #controls { padding: 20px; display: flex; flex-direction: column; gap: 10px; width: 400px; }
+  .control-group { border: 1px solid #555; padding: 10px; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div id="u" class="box">User</div>
+    <div id="p" class="box">Pass</div>
+    <div id="c" class="box">Conf</div>
+    <div id="b" class="box">Btn</div>
+  </div>
+  <div id="controls"></div>
+  <script>
+    const state = {
+      u: { top: 70.8, left: 33, width: 35, height: 4.8 },
+      p: { top: 76.8, left: 33, width: 35, height: 4.8 },
+      c: { top: 82.8, left: 33, width: 35, height: 4.8 },
+      b: { top: 89.2, left: 28.5, width: 43, height: 5.5 }
+    };
+    function update() {
+      for (const id in state) {
+        const el = document.getElementById(id);
+        el.style.top = state[id].top + '%';
+        el.style.left = state[id].left + '%';
+        el.style.width = state[id].width + '%';
+        el.style.height = state[id].height + '%';
+      }
+    }
+    const cdiv = document.getElementById('controls');
+    for (const id in state) {
+      const g = document.createElement('div');
+      g.className = 'control-group';
+      g.innerHTML = `<h3>${id}</h3>`;
+      for (const prop in state[id]) {
+        const d = document.createElement('div');
+        d.innerHTML = `<label style="display:inline-block;width:50px">${prop}</label> <input type="range" id="${id}-${prop}" min="0" max="100" step="0.1" value="${state[id][prop]}" style="width:200px"> <span id="val-${id}-${prop}">${state[id][prop]}</span>`;
+        g.appendChild(d);
+      }
+      cdiv.appendChild(g);
+    }
+    document.addEventListener('input', e => {
+      if (e.target.type === 'range') {
+        const [id, prop] = e.target.id.split('-');
+        state[id][prop] = parseFloat(e.target.value);
+        document.getElementById(`val-${id}-${prop}`).innerText = state[id][prop];
+        update();
+      }
+    });
+    update();
+  </script>
+</body>
+</html>

@@ -1,31 +1,28 @@
-import { Copy } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Copy, Check } from "lucide-react";
 
-type Props = {
+interface CopyButtonProps {
   text: string;
-};
+  label?: string;
+}
 
-function CopyButton({
-  text,
-}: Props) {
-  const copy = async () => {
-    await navigator.clipboard.writeText(
-      text
-    );
+export default function CopyButton({ text, label = "Copy" }: CopyButtonProps) {
+  const [copied, setCopied] = useState(false);
 
-    alert(
-      "Prompt copied successfully"
-    );
-  };
+  const handleCopy = useCallback(async () => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [text]);
 
   return (
     <button
-      onClick={copy}
-      className="flex items-center gap-2"
+      className={`copy-btn${copied ? " copied" : ""}`}
+      onClick={handleCopy}
+      title="Copy to clipboard"
     >
-      <Copy size={16} />
-      Copy
+      {copied ? <Check size={13} /> : <Copy size={13} />}
+      {copied ? "Copied!" : label}
     </button>
   );
 }
-
-export default CopyButton;

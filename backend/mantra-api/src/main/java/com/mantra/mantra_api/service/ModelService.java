@@ -13,8 +13,11 @@ public class ModelService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${mantra.ai.url}")
+    @Value("${groq.api.url}")
     private String aiUrl;
+
+    @Value("${groq.api.key}")
+    private String groqApiKey;
 
     public ModelService(
             RestTemplate restTemplate) {
@@ -26,17 +29,10 @@ public class ModelService {
     public List<ModelResponse.ModelInfo>
     getModels() {
 
-        String tagsUrl =
-                aiUrl.replace(
-                        "/api/generate",
-                        "/api/tags");
+        String tagsUrl = aiUrl.replace("/chat/completions", "/models");
 
-        HttpHeaders headers =
-                new HttpHeaders();
-
-        headers.add(
-                "ngrok-skip-browser-warning",
-                "true");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + groqApiKey);
 
         HttpEntity<Void> entity =
                 new HttpEntity<>(headers);

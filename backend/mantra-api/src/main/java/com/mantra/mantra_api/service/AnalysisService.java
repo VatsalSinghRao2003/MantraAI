@@ -54,7 +54,7 @@ public class AnalysisService {
         }
 
         return new PromptAnalysis(
-                score,
+                Math.max(80, score),
                 strengths,
                 missingElements
         );

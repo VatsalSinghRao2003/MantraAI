@@ -1,465 +1,95 @@
-import { Routes, Route, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import Sidebar from "./components/Sidebar";
+import { useAuth } from "./context/AuthContext";
+
+// Pages
 import Dashboard from "./pages/Dashboard";
+import OptimizePage from "./pages/Optimize";
 import HistoryPage from "./pages/History";
-import Benchmark from "./pages/Benchmark";
-import {
-  optimizePrompt,
-  getHistory,
-  getStats,
-  getCategories,
-  comparePrompts,
-  getTemplates,
-  getFeedback
-} from "./services/api";
+import AnalyticsPage from "./pages/Analytics";
+import ComparePage from "./pages/Compare";
+import BenchmarkPage from "./pages/Benchmark";
+import TemplatesPage from "./pages/Templates";
+import FeedbackPage from "./pages/Feedback";
+import ModelsPage from "./pages/Models";
+import FavoritesPage from "./pages/Favorites";
+import MultiModelPage from "./pages/MultiModel";
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
+import CollectionsPage from "./pages/Collections";
+import LibraryPage from "./pages/Library";
+import WorkspacePage from "./pages/Workspace";
 
-function OptimizePage() {
-const [prompt, setPrompt] = useState("");
-const [result, setResult] = useState<any>(null);
-const [loading, setLoading] = useState(false);
-
-const handleOptimize = async () => {
-if (!prompt.trim()) {
-alert("Please enter a prompt");
-return;
-}
-
-try {
-  setLoading(true);
-
-  const data = await optimizePrompt(prompt);
-
-  console.log("API Response:", data);
-
-  setResult(data);
-} catch (error) {
-  console.error(error);
-  alert("Backend connection failed");
-} finally {
-  setLoading(false);
-}
-
+const PAGE_TITLES: Record<string, string> = {
+  "/": "Dashboard — Mantra AI",
+  "/optimize": "Optimize — Mantra AI",
+  "/history": "History — Mantra AI",
+  "/analytics": "Analytics — Mantra AI",
+  "/compare": "Compare — Mantra AI",
+  "/benchmark": "Benchmark — Mantra AI",
+  "/templates": "Templates — Mantra AI",
+  "/feedback": "Feedback — Mantra AI",
+  "/models": "Models — Mantra AI",
+  "/favorites": "Favorites — Mantra AI",
+  "/multi-model": "Multi-Model — Mantra AI",
+  "/collections": "Collections — Mantra AI",
+  "/library": "Library — Mantra AI",
+  "/workspaces": "Workspaces — Mantra AI",
+  "/login": "Sign In — Mantra AI",
+  "/register": "Sign Up — Mantra AI",
 };
-
-return ( <div> <h1>🚀 Mantra AI</h1>
-  <h3>Prompt Optimizer</h3>
-
-  <textarea
-    rows={8}
-    value={prompt}
-    onChange={(e) => setPrompt(e.target.value)}
-    placeholder="Enter your prompt here..."
-    style={{
-      width: "100%",
-      maxWidth: "900px",
-      padding: "12px",
-      fontSize: "16px",
-      borderRadius: "8px",
-      border: "1px solid #444",
-      backgroundColor: "#1f2937",
-      color: "white",
-    }}
-  />
-
-  <br />
-  <br />
-
-  <button
-    onClick={handleOptimize}
-    disabled={loading}
-    style={{
-      padding: "12px 24px",
-      border: "none",
-      borderRadius: "8px",
-      cursor: "pointer",
-      fontSize: "16px",
-    }}
-  >
-    {loading ? "Optimizing..." : "Optimize Prompt"}
-  </button>
-
-  {result && (
-    <div
-      style={{
-        marginTop: "30px",
-        padding: "20px",
-        backgroundColor: "#1f2937",
-        borderRadius: "10px",
-        maxWidth: "1000px",
-      }}
-    >
-      <h2>Optimized Prompt</h2>
-
-      <pre
-        style={{
-          whiteSpace: "pre-wrap",
-          wordBreak: "break-word",
-        }}
-      >
-        {result.optimizedPrompt}
-      </pre>
-
-      <hr />
-
-      <h3>Score</h3>
-      <p>{result.score}</p>
-
-      <h3>Category</h3>
-      <p>{result.category}</p>
-
-      {result.strengths && (
-        <>
-          <h3>Strengths</h3>
-          <ul>
-            {result.strengths.map((item: string, index: number) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {result.missingElements && (
-        <>
-          <h3>Missing Elements</h3>
-          <ul>
-            {result.missingElements.map((item: string, index: number) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </>
-      )}
-    </div>
-  )}
-</div>
-
-);
-}
-
-
-function TemplatesPage() {
-const [templates, setTemplates] = useState<any[]>([]);
-
-useEffect(() => {
-loadTemplates();
-}, []);
-
-const loadTemplates = async () => {
-try {
-const data = await getTemplates();
-setTemplates(data);
-} catch (error) {
-console.error(error);
-}
-};
-
-return ( <div> <h2>Prompt Templates</h2>
-
-  {templates.map((template, index) => (
-    <div
-      key={index}
-      style={{
-        background: "#1f2937",
-        padding: "20px",
-        marginBottom: "15px",
-        borderRadius: "10px",
-      }}
-    >
-      <h3>{template.category}</h3>
-
-      <pre
-        style={{
-          whiteSpace: "pre-wrap",
-        }}
-      >
-        {template.template}
-      </pre>
-    </div>
-  ))}
-</div>
-
-
-);
-}
-
-
-
-function FeedbackPage() {
-  const [prompt, setPrompt] = useState("");
-  const [feedback, setFeedback] = useState("");
-
-  const handleFeedback = async () => {
-    try {
-      const data = await getFeedback(prompt);
-      setFeedback(data.feedback);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return (
-    <div>
-      <h2>AI Prompt Critic</h2>
-
-      <textarea
-        rows={6}
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-        placeholder="Enter prompt..."
-        style={{
-          width: "100%",
-          marginBottom: "10px",
-        }}
-      />
-
-      <button onClick={handleFeedback}>
-        Analyze Prompt
-      </button>
-
-      {feedback && (
-        <div
-          style={{
-            marginTop: "20px",
-            background: "#1f2937",
-            padding: "20px",
-            borderRadius: "10px",
-          }}
-        >
-          <pre
-            style={{
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            {feedback}
-          </pre>
-        </div>
-      )}
-    </div>
-  );
-}
-function AnalyticsPage() {
-  const [stats, setStats] = useState<any>(null);
-  const [categories, setCategories] = useState<any>({});
-
-  useEffect(() => {
-    loadAnalytics();
-  }, []);
-
-  const loadAnalytics = async () => {
-    try {
-      const statsData = await getStats();
-      const categoryData = await getCategories();
-
-      setStats(statsData);
-      setCategories(categoryData);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return (
-    <div>
-      <h2>Analytics</h2>
-
-      {stats && (
-        <div
-          style={{
-            background: "#1f2937",
-            padding: "20px",
-            borderRadius: "10px",
-            marginBottom: "20px",
-          }}
-        >
-          <h3>Total Prompts</h3>
-          <p>{stats.totalPrompts}</p>
-
-          <h3>Average Score</h3>
-          <p>{stats.averageScore}</p>
-        </div>
-      )}
-
-      <div
-        style={{
-          background: "#1f2937",
-          padding: "20px",
-          borderRadius: "10px",
-        }}
-      >
-        <h3>Categories</h3>
-
-        {Object.entries(categories).map(([key, value]) => (
-          <p key={key}>
-            {key}: {String(value)}
-          </p>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ComparePage() {
-const [prompt1, setPrompt1] = useState("");
-const [prompt2, setPrompt2] = useState("");
-const [result, setResult] = useState<any>(null);
-
-const handleCompare = async () => {
-try {
-const data = await comparePrompts(
-prompt1,
-prompt2
-);
-
-  setResult(data);
-} catch (error) {
-  console.error(error);
-}
-
-};
-
-return ( <div> <h2>Compare Prompts</h2>
-
-  <textarea
-    rows={5}
-    value={prompt1}
-    onChange={(e) =>
-      setPrompt1(e.target.value)
-    }
-    placeholder="Prompt 1"
-    style={{
-      width: "100%",
-      marginBottom: "10px",
-    }}
-  />
-
-  <textarea
-    rows={5}
-    value={prompt2}
-    onChange={(e) =>
-      setPrompt2(e.target.value)
-    }
-    placeholder="Prompt 2"
-    style={{
-      width: "100%",
-      marginBottom: "10px",
-    }}
-  />
-
-  <button onClick={handleCompare}>
-    Compare
-  </button>
-
-  {result && (
-    <div
-      style={{
-        marginTop: "20px",
-        background: "#1f2937",
-        padding: "20px",
-        borderRadius: "10px",
-      }}
-    >
-      <h3>Results</h3>
-
-      <p>
-        Score 1: {result.score1}
-      </p>
-
-      <p>
-        Score 2: {result.score2}
-      </p>
-
-      <h2>
-        Winner: {result.winner}
-      </h2>
-    </div>
-  )}
-</div>
-
-);
-}
-
-
 
 export default function App() {
-return (
-<div
-style={{
-display: "flex",
-minHeight: "100vh",
-backgroundColor: "#111827",
-color: "white",
-fontFamily: "Arial, sans-serif",
-}}
->
-<div
-style={{
-width: "240px",
-backgroundColor: "#1f2937",
-padding: "20px",
-}}
-> <h2>🚀 Mantra AI</h2>
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
-    <p>
-      <Link to="/" style={{ color: "white" }}>
-        Dashboard
-      </Link>
-    </p>
-  <p>
-  <Link to="/optimize" style={{ color: "white" }}>
-    Optimize
-  </Link>
-</p>
-    <p>
-      <Link to="/history" style={{ color: "white" }}>
-        History
-      </Link>
-    </p>
+  useEffect(() => {
+    document.title =
+      PAGE_TITLES[location.pathname] ?? "Mantra AI — Prompt Intelligence";
+  }, [location.pathname]);
 
-    <p>
-      <Link to="/analytics" style={{ color: "white" }}>
-        Analytics
-      </Link>
-    </p>
+  // Auth pages don't render Sidebar layout
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
-    <p>
-      <Link to="/compare" style={{ color: "white" }}>
-        Compare
-      </Link>
-    </p>
-  <p>
-  <Link to="/benchmark" style={{ color: "white" }}>
-    Benchmark
-  </Link>
-</p>
-    <p>
-      <Link to="/templates" style={{ color: "white" }}>
-        Templates
-      </Link>
-    </p>
+  if (!isAuthenticated && !isAuthPage) {
+    return <Navigate to="/login" replace />;
+  }
 
-<p>
-  <Link to="/feedback" style={{ color: "white" }}>
-    Feedback
-  </Link>
-</p>
-  </div>
+  if (isAuthPage) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
 
-  <div
-  style={{
-    flex: 1,
-    padding: "30px",
-  }}
->
-  <Routes>
-    <Route path="/" element={<Dashboard />} />
-    <Route path="/optimize" element={<OptimizePage />} />
-    <Route path="/history" element={<HistoryPage />} />
-    <Route path="/analytics" element={<AnalyticsPage />} />
-    <Route path="/compare" element={<ComparePage />} />
-    <Route path="/benchmark" element={<Benchmark />} />
-    <Route path="/templates" element={<TemplatesPage />} />
-    <Route path="/feedback" element={<FeedbackPage />} />
-  </Routes>
-</div>
-</div>
-
-);
+  return (
+    <div className="app-layout">
+      <Sidebar />
+      <main className="main-content">
+        <div style={{ flex: 1 }}>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/optimize" element={<OptimizePage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/compare" element={<ComparePage />} />
+            <Route path="/benchmark" element={<BenchmarkPage />} />
+            <Route path="/templates" element={<TemplatesPage />} />
+            <Route path="/feedback" element={<FeedbackPage />} />
+            <Route path="/models" element={<ModelsPage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/multi-model" element={<MultiModelPage />} />
+            <Route path="/collections" element={<CollectionsPage />} />
+            <Route path="/library" element={<LibraryPage />} />
+            <Route path="/workspaces" element={<WorkspacePage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </main>
+    </div>
+  );
 }
