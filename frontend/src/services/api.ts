@@ -74,7 +74,8 @@ export interface ScoreDistribution {
 
 // ─── Axios Instances ─────────────────────────────────────────────────────────
 
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const RAW_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const BASE = RAW_BASE.endsWith('/') ? RAW_BASE.slice(0, -1) : RAW_BASE;
 
 const API = axios.create({
   baseURL: `${BASE}/api/prompts`,
