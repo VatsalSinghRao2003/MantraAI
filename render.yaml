@@ -1,0 +1,36 @@
+databases:
+  - name: mantra-db
+    databaseName: mantra
+    user: mantra_user
+    plan: free
+
+services:
+  - type: web
+    name: mantra-api
+    env: docker
+    rootDir: backend/mantra-api
+    plan: free
+    healthCheckPath: /api/health/ai
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: mantra-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: mantra-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: mantra-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: mantra-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: mantra-db
+          property: password
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
