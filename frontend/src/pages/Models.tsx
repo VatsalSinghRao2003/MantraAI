@@ -1,23 +1,8 @@
 import { useEffect, useState } from "react";
 import { getModels } from "../services/api";
-import { Cpu, HardDrive, Calendar, Search } from "lucide-react";
+import { Cpu, Search } from "lucide-react";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
-
-function formatSize(bytes: number) {
-  if (!bytes) return "Unknown";
-  const gb = bytes / 1e9;
-  return gb >= 1 ? `${gb.toFixed(1)} GB` : `${(bytes / 1e6).toFixed(0)} MB`;
-}
-
-function formatDate(dateStr: string) {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 export default function ModelsPage() {
   const [models, setModels] = useState<any[]>([]);
