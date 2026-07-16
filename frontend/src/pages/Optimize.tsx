@@ -24,7 +24,7 @@ export default function OptimizePage() {
       const data = await optimizePrompt(prompt);
       setResult(data);
     } catch {
-      setError("Failed to connect to AI backend. Make sure the backend and Ollama are running.");
+      setError("Failed to connect to AI backend. Make sure the backend is running and the Groq API key is valid.");
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ export default function OptimizePage() {
         <div className="flex items-center justify-between mt-4">
           <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
             <Sparkles size={12} style={{ display: "inline", marginRight: 4 }} />
-            Powered by Ollama · llama3.2
+            Powered by Groq Cloud
           </div>
           <button
             className="btn btn-primary btn-lg"

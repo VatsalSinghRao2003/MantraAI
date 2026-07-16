@@ -29,10 +29,10 @@ public class HealthController {
                 connected ? "UP" : "DOWN",
 
                 "provider",
-                "Ollama",
+                "Groq",
 
                 "model",
-                "llama3.2"
+                "Llama 4 Scout"
         );
     }
 }

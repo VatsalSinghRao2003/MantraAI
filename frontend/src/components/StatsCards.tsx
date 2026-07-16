@@ -33,7 +33,7 @@ export default function StatsCards() {
       value: stats?.totalPrompts ?? 0,
       icon: Zap,
       color: "cyan",
-      sub: "Ollama API calls",
+      sub: "Groq API calls",
     },
     {
       label: "Improvement Rate",

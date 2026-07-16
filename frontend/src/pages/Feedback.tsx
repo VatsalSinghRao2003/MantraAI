@@ -98,7 +98,7 @@ export default function FeedbackPage() {
         <div className="flex items-center justify-between mt-4">
           <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
             <Sparkles size={12} style={{ display: "inline", marginRight: 4 }} />
-            Deep analysis powered by Ollama
+            Deep analysis powered by Groq
           </div>
           <button
             className="btn btn-primary btn-lg"

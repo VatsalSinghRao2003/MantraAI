@@ -12,7 +12,7 @@ export default function AIStatusCard() {
         const data = await getAIHealth();
         setHealth(data);
       } catch {
-        setHealth({ status: "DOWN", provider: "Ollama", model: "unknown" });
+        setHealth({ status: "DOWN", provider: "Groq", model: "unknown" });
       } finally {
         setLoading(false);
       }
@@ -90,7 +90,7 @@ export default function AIStatusCard() {
           <div>Auto-refresh: 30s</div>
           <div className="flex items-center gap-1 mt-2" style={{ justifyContent: "flex-end" }}>
             <Wifi size={12} />
-            <span>Ollama via ngrok</span>
+            <span>Groq Cloud API</span>
           </div>
         </div>
       </div>
