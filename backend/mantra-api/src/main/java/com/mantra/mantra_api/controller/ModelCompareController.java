@@ -41,7 +41,7 @@ public class ModelCompareController {
         List<String> models = request.getModels();
 
         if (models == null || models.isEmpty()) {
-            models = List.of("openai/gpt-oss-20b");
+            models = List.of("meta-llama/llama-4-scout-17b-16e-instruct");
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(

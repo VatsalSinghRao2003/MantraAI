@@ -3,7 +3,7 @@ package com.mantra.mantra_api.dto.ai;
 import java.util.List;
 
 public class AIRequest {
-    private String model = "llama-3.1-8b-instant";
+    private String model = "meta-llama/llama-4-scout-17b-16e-instruct";
     private List<Message> messages;
     private double temperature = 0.2;
 

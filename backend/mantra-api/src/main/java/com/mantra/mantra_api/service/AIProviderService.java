@@ -26,7 +26,7 @@ public class AIProviderService {
 
     private AIResponse callOllama(String prompt, String model) {
         AIRequest request = new AIRequest();
-        request.setModel(model != null ? model : "openai/gpt-oss-20b");
+        request.setModel(model != null ? model : "meta-llama/llama-4-scout-17b-16e-instruct");
         request.setPrompt(prompt);
         request.setStream(false);
 
@@ -130,7 +130,7 @@ public class AIProviderService {
     public boolean isHealthy() {
         try {
             AIRequest request = new AIRequest();
-            request.setModel("openai/gpt-oss-20b");
+            request.setModel("meta-llama/llama-4-scout-17b-16e-instruct");
             request.setPrompt("hello");
             request.setStream(false);
 
@@ -145,6 +145,8 @@ public class AIProviderService {
 
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception ex) {
+            System.err.println("AI Provider Health Check failed: " + ex.getMessage());
+            ex.printStackTrace();
             return false;
         }
     }
