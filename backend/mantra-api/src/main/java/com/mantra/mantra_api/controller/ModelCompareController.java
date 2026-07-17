@@ -58,8 +58,13 @@ public class ModelCompareController {
                     aiReq.setModel(m);
                     aiReq.setPrompt(
                             "You are Mantra AI, an expert prompt optimizer.\n\n" +
-                            "Transform the user's prompt into a highly detailed and structured prompt.\n" +
-                            "Do NOT answer the prompt. Only return the optimized prompt.\n\n" +
+                            "Transform the user's prompt into a highly detailed, professional, and structured prompt.\n" +
+                            "You MUST structure the output prompt to explicitly include the following sections:\n" +
+                            "- Objective: (a clear objective for the task)\n" +
+                            "- Technology Stack: (specify technologies, e.g., Java, Spring, React, or others relevant to the prompt)\n" +
+                            "- Audience: (define the target audience)\n" +
+                            "- Output Format: (define the expected output format)\n\n" +
+                            "Do NOT answer the prompt. Only return the optimized prompt inside your response.\n\n" +
                             "User Prompt:\n" + prompt
                     );
                     aiReq.setStream(false);
