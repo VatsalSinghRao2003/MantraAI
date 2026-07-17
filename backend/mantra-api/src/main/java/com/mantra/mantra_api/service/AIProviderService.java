@@ -129,19 +129,15 @@ public class AIProviderService {
 
     public boolean isHealthy() {
         try {
-            AIRequest request = new AIRequest();
-            request.setModel("meta-llama/llama-4-scout-17b-16e-instruct");
-            request.setPrompt("hello");
-            request.setStream(false);
+            String modelsUrl = aiUrl.replace("/chat/completions", "/models");
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", "Bearer " + groqApiKey);
 
-            HttpEntity<AIRequest> entity = new HttpEntity<>(request, headers);
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-            ResponseEntity<AIResponse> response = restTemplate.postForEntity(
-                    aiUrl, entity, AIResponse.class);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    modelsUrl, org.springframework.http.HttpMethod.GET, entity, String.class);
 
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception ex) {
