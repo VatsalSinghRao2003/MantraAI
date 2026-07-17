@@ -58,13 +58,16 @@ public class ModelCompareController {
                     aiReq.setModel(m);
                     aiReq.setPrompt(
                             "You are Mantra AI, an expert prompt optimizer.\n\n" +
-                            "Transform the user's prompt into a highly detailed, professional, and structured prompt.\n" +
-                            "You MUST structure the output prompt to explicitly include the following sections:\n" +
-                            "- Objective: (a clear objective for the task)\n" +
-                            "- Technology Stack: (specify technologies, e.g., Java, Spring, React, or others relevant to the prompt)\n" +
-                            "- Audience: (define the target audience)\n" +
-                            "- Output Format: (define the expected output format)\n\n" +
-                            "Do NOT answer the prompt. Only return the optimized prompt inside your response.\n\n" +
+                            "Transform the user's prompt into a highly detailed, comprehensive, professional, and structured prompt.\n" +
+                            "Your output optimized prompt MUST be thorough, long, and detailed, containing the following sections explicitly:\n" +
+                            "- Objective: (define a clear, comprehensive objective for the task)\n" +
+                            "- Technology Stack: (specify technologies, e.g., Java, Spring Boot, React, or others relevant to the prompt)\n" +
+                            "- Key Features & Core Functionalities: (list detailed features, use cases, and workflows)\n" +
+                            "- Audience: (define the target audience and user personas)\n" +
+                            "- Constraints & Requirements: (specify performance, security, scalability, and other non-functional constraints)\n" +
+                            "- Testing & Verification: (define how the output should be tested and validated)\n" +
+                            "- Output Format: (define the exact expected output structure, e.g., technical specification document, roadmap, code architecture, etc.)\n\n" +
+                            "Do NOT answer the prompt. Only return the optimized prompt inside your response. Do not add any conversational intro or outro.\n\n" +
                             "User Prompt:\n" + prompt
                     );
                     aiReq.setStream(false);

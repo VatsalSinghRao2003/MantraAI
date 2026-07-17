@@ -54,7 +54,7 @@ public class PromptController {
         AIResponse aiResponse = aiProviderService.optimizeWithMetrics(prompt);
         String optimized = aiResponse.getResponse();
 
-        PromptAnalysis analysis = analysisService.analyze(prompt);
+        PromptAnalysis analysis = analysisService.analyze(optimized);
         String category = categoryService.detectCategory(prompt);
 
         // Persist to history including AI performance metrics
